@@ -1,0 +1,14 @@
+{
+  "name": "clipmill-ejemplo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "estudio": "fotograma estudio",
+    "render": "fotograma render"
+  },
+  "dependencies": {
+    "fotograma": "file:..",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

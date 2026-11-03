@@ -1,0 +1,16 @@
+node_modules/
+ejemplo/out/
+.vite/
+*.log
+ejemplo/.fotograma/
+.fotograma/
+.claude/settings.local.json
+
+# carpetas pesadas (pueden ser enlaces a otro disco)
+ejemplo/out
+ejemplo/public/noticias
+ejemplo/public/tutoriales
+ejemplo/public/uploads
+ejemplo/public/lento
+
+__pycache__/

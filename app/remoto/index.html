@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0d0f12" />
+<link rel="icon" href="data:," />
+<title>Clipmill · remoto</title>
+<style>
+  :root { --fondo: #0d0f12; --panel: #161a1f; --panel2: #1e232a; --borde: #2a3039; --texto: #e8ebef; --tenue: #8b94a0; --acento: #f5b83d; --ok: #3dd68c; --error: #ff6b6b; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--fondo); color: var(--texto); font: 15px/1.4 system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { background: var(--panel2); border: 1px solid var(--borde); border-radius: 10px; padding: 8px 12px; }
+  button:active { transform: scale(0.97); }
+  .primario { background: var(--acento); color: #111; border-color: var(--acento); font-weight: 700; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--fondo); padding: calc(env(safe-area-inset-top) + 10px) 16px 0; }
+  .marca { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 17px; }
+  .marca b { color: var(--acento); }
+  .marca small { color: var(--tenue); font-weight: 500; font-size: 12px; margin-left: auto; }
+  nav { display: flex; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--borde); }
+  nav button { flex: 1; background: none; border-color: transparent; color: var(--tenue); }
+  nav button.on { background: var(--panel2); border-color: var(--borde); color: var(--texto); font-weight: 700; }
+  main { padding: 12px 16px calc(env(safe-area-inset-bottom) + 90px); }
+  .vacio { color: var(--tenue); text-align: center; padding: 40px 10px; }
+  .tarjeta { background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+  .tarjeta.pendiente { border-style: dashed; }
+  .tarjeta.error, .tarjeta.cancelado { border-color: #5a2a2e; }
+  .t1 { display: flex; gap: 6px; align-items: baseline; }
+  .t1 b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .t1 small, .sub { color: var(--tenue); font-size: 12px; }
+  .barra { height: 6px; background: var(--panel2); border-radius: 3px; overflow: hidden; margin: 8px 0 4px; }
+  .barra div { height: 100%; background: var(--acento); transition: width 0.4s; }
+  .acciones { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .acciones button { padding: 6px 10px; font-size: 13px; }
+  .estado-listo { color: var(--ok); }
+  .estado-error { color: var(--error); }
+  input.buscar { width: 100%; background: var(--panel); border: 1px solid var(--borde); border-radius: 10px; padding: 10px 12px; margin: 4px 0 10px; }
+  details { background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; margin-bottom: 8px; }
+  summary { padding: 12px; font-weight: 700; list-style: none; display: flex; gap: 8px; }
+  summary::-webkit-details-marker { display: none; }
+  summary small { margin-left: auto; color: var(--tenue); font-weight: 500; }
+  .comp { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-top: 1px solid var(--borde); }
+  .comp div { flex: 1; min-width: 0; }
+  .comp b { display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat { display: flex; flex-direction: column; gap: 8px; }
+  .msg { padding: 9px 12px; border-radius: 12px; max-width: 88%; white-space: pre-wrap; word-break: break-word; }
+  .msg.usuario { align-self: flex-end; background: #3a2f12; border: 1px solid #5c4a1a; }
+  .msg.asistente { align-self: flex-start; background: var(--panel); border: 1px solid var(--borde); }
+  .msg.paso { align-self: flex-start; color: var(--tenue); font-size: 12px; padding: 2px 4px; }
+  .msg.error { align-self: flex-start; color: var(--error); font-size: 13px; }
+  .confirmar { border-color: var(--acento); }
+  .redactar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 8px; padding: 10px 16px calc(env(safe-area-inset-bottom) + 10px); background: var(--fondo); border-top: 1px solid var(--borde); }
+  .redactar textarea { flex: 1; resize: none; background: var(--panel); border: 1px solid var(--borde); border-radius: 10px; padding: 9px 12px; height: 44px; }
+  .emparejar { max-width: 360px; margin: 60px auto; text-align: center; }
+  .emparejar input { width: 100%; font-size: 28px; letter-spacing: 0.3em; text-align: center; background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .modal { position: fixed; inset: 0; z-index: 10; background: #000d; display: flex; flex-direction: column; justify-content: center; padding: 16px; }
+  .modal video { width: 100%; max-height: 80vh; border-radius: 10px; background: #000; }
+  .modal button { margin-top: 12px; }
+  .aviso { position: fixed; left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom) + 70px); z-index: 20; background: var(--panel2); border: 1px solid var(--borde); border-radius: 10px; padding: 10px 12px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $ = (s) => document.querySelector(s)
+const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
+const api = async (ruta, cuerpo) => {
+  const r = await fetch('/api/' + ruta, cuerpo ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) } : {})
+  const d = await r.json().catch(() => ({}))
+  if (r.status === 401 && d.emparejar) { estado.emparejado = false; pintar(); throw new Error(d.error) }
+  if (!r.ok || d.error) throw new Error(d.error || 'Error ' + r.status)
+  return d
+}
+const avisar = (t) => {
+  const a = document.createElement('div')
+  a.className = 'aviso'
+  a.textContent = t
+  document.body.append(a)
+  setTimeout(() => a.remove(), 2800)
+}
+
+const GUARDADO = 'clipmill-remoto:chat'
+let guardado = { historial: [], vista: [] }
+try { guardado = JSON.parse(localStorage.getItem(GUARDADO)) || guardado } catch {}
+const estado = { emparejado: null, nombre: '', pestana: 'cola', cola: [], comps: null, buscar: '', historial: guardado.historial, vista: guardado.vista, pendiente: null, pensando: false, abiertos: new Set() }
+const guardarChat = () => { try { localStorage.setItem(GUARDADO, JSON.stringify({ historial: estado.historial.slice(-40), vista: estado.vista.slice(-80) })) } catch {} }
+
+const nombreEquipo = () => {
+  const ua = navigator.userAgent
+  const so = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? 'Android' : /Mac/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : 'Navegador'
+  const nav = /CriOS|Chrome/.test(ua) ? 'Chrome' : /Firefox|FxiOS/.test(ua) ? 'Firefox' : /Safari/.test(ua) ? 'Safari' : ''
+  return [so, nav].filter(Boolean).join(' · ')
+}
+
+const emparejar = async (codigo) => {
+  try {
+    const r = await api('emparejar', { codigo, nombre: nombreEquipo() })
+    estado.emparejado = true
+    estado.nombre = r.nombre
+    history.replaceState(null, '', '/')
+    leerCola()
+    pintar()
+  } catch (e) { avisar(e.message) }
+}
+
+// ───── Cola ─────
+const tiempo = (ms) => { const s = Math.round(ms / 1000); return s < 60 ? s + ' s' : Math.floor(s / 60) + ' min ' + (s % 60) + ' s' }
+const vistaCola = () => {
+  if (!estado.cola.length) return '<p class="vacio">La cola está vacía. Encolá un render desde «Renderizar» o pedíselo al asistente.</p>'
+  return estado.cola.map((t) => {
+    const pct = t.progreso.total ? Math.round((t.progreso.hechos / t.progreso.total) * 100) : 0
+    const tipo = t.tipo === 'retake' ? 'retake' : t.codec
+    let cuerpo = ''
+    if (t.estado === 'pendiente') cuerpo = `<div class="sub">#${t.posicion} en la fila${t.progreso.mensaje ? ' · ' + esc(t.progreso.mensaje) : ''}</div>
+      <div class="acciones"><button data-mover="primero" data-id="${t.id}">⤒ primero</button><button data-mover="arriba" data-id="${t.id}">↑</button><button data-mover="abajo" data-id="${t.id}">↓</button><button data-cancelar="${t.id}">✕ cancelar</button></div>`
+    if (t.estado === 'corriendo') cuerpo = `<div class="barra"><div style="width:${pct}%"></div></div>
+      <div class="sub">${esc(t.progreso.mensaje || t.progreso.etapa)} ${t.progreso.total ? t.progreso.hechos + '/' + t.progreso.total : ''} · ${tiempo(Date.now() - t.inicio)}</div>
+      <div class="acciones"><button data-cancelar="${t.id}">✕ cancelar</button></div>`
+    if (t.estado === 'listo') cuerpo = `<div class="sub estado-listo">✓ listo en ${tiempo((t.fin || 0) - t.inicio)}</div>
+      ${t.codec !== 'png' ? `<div class="acciones"><button class="primario" data-ver="${t.id}">▶ Ver</button></div>` : ''}`
+    if (t.estado === 'error' || t.estado === 'cancelado') cuerpo = `<div class="sub estado-error">${esc((t.error || t.estado).slice(0, 200))}</div>
+      <div class="acciones"><button data-reintentar="${t.id}">↻ reintentar</button></div>`
+    return `<div class="tarjeta ${t.estado}"><div class="t1"><b>${esc(t.composicion)}</b><small>${tipo}${t.origen && t.origen !== 'estudio' ? ' · ' + t.origen : ''}</small></div>${cuerpo}</div>`
+  }).join('')
+}
+const leerCola = async () => { try { estado.cola = await api('cola'); if (estado.pestana === 'cola') pintarMain() } catch {} }
+
+// ───── Renderizar ─────
+const vistaRender = () => {
+  if (!estado.comps) return '<p class="vacio">Cargando composiciones… (la primera vez tarda unos segundos)</p>'
+  const q = estado.buscar.toLowerCase()
+  const lista = estado.comps.filter((c) => !q || (c.id + ' ' + c.titulo + ' ' + c.carpeta + ' ' + c.canal).toLowerCase().includes(q))
+  const canales = new Map()
+  for (const c of lista) (canales.get(c.canal) || canales.set(c.canal, []).get(c.canal)).push(c)
+  const bloques = [...canales.entries()].map(([canal, cs]) => `<details ${q || estado.abiertos.has(canal) ? 'open' : ''} data-canal="${esc(canal)}"><summary>${cs[0].icono} ${esc(canal)}<small>${cs.length}</small></summary>
+    ${cs.map((c) => `<div class="comp"><div><b>${esc(c.titulo)}</b><span class="sub">${c.carpeta === 'Guiones' ? '✎ guion · ' : esc(c.carpeta) + ' · '}${c.segundos} s · ${c.formato}</span></div><button data-render="${esc(c.id)}">Encolar</button></div>`).join('')}</details>`).join('')
+  return `<input class="buscar" placeholder="Buscar composición…" value="${esc(estado.buscar)}" id="buscar" />${bloques || '<p class="vacio">Nada coincide.</p>'}`
+}
+
+// ───── Asistente ─────
+const NOMBRES = { encolar_render: 'Lo puse en la cola', retake_tramo: 'Encolé el retake', ver_cola: 'Revisé la cola', cancelar_trabajo: 'Cancelé el trabajo', mover_trabajo: 'Reordené la cola', listar_composiciones: 'Revisé las composiciones', crear_guion: 'Creé el guion', listar_guiones: 'Revisé tus videos', leer_guion: 'Leí el guion' }
+const vistaAsistente = () => {
+  const mensajes = estado.vista.map((m) => `<div class="msg ${m.tipo}">${esc(m.texto)}</div>`).join('')
+  const pend = estado.pendiente ? `<div class="tarjeta confirmar"><b>¿Confirmás?</b><div class="sub">${esc(estado.pendiente.descripcion)}</div>
+    <div class="acciones"><button class="primario" data-decidir="1">Confirmar</button><button data-decidir="0">Cancelar</button></div></div>` : ''
+  const vacio = !estado.vista.length ? '<p class="vacio">Pedile cosas como «encolá los 3 idiomas de MotoEvolucion», «¿cómo va la cola?» o «hacé retake de 10 a 14 s del Reel ES».</p>' : ''
+  return `<div class="chat">${vacio}${mensajes}${pend}${estado.pensando ? '<div class="msg paso">Pensando…</div>' : ''}</div>
+    <div class="redactar"><textarea id="texto" placeholder="Pedile algo al asistente…" ${estado.pensando ? 'disabled' : ''}></textarea><button class="primario" id="enviar" ${estado.pensando ? 'disabled' : ''}>➤</button></div>`
+}
+const procesar = (base, r) => {
+  estado.historial = [...base, ...r.mensajes]
+  for (const p of r.pasos) estado.vista.push({ tipo: 'paso', texto: (p.ok ? '✓ ' : '✕ ') + (NOMBRES[p.herramienta] || p.herramienta) + (p.resumen ? ': ' + p.resumen : '') })
+  if (r.texto?.trim()) estado.vista.push({ tipo: 'asistente', texto: r.texto.trim() })
+  estado.pendiente = r.pendiente || null
+  guardarChat()
+}
+const preguntar = async (texto, decision) => {
+  const base = texto ? [...estado.historial, { role: 'user', content: texto }] : estado.historial
+  if (texto) estado.vista.push({ tipo: 'usuario', texto })
+  estado.pensando = true
+  pintarMain()
+  try { procesar(base, await api('asistente', { historial: base, decision })) }
+  catch (e) { estado.vista.push({ tipo: 'error', texto: e.message }) }
+  estado.pensando = false
+  guardarChat()
+  pintarMain()
+  leerCola()
+}
+
+// ───── Pintar ─────
+const pintarMain = () => {
+  const m = $('main')
+  if (!m) return
+  const foco = document.activeElement?.id
+  const cursor = foco === 'buscar' ? $('#buscar').selectionStart : null
+  m.innerHTML = estado.pestana === 'cola' ? vistaCola() : estado.pestana === 'render' ? vistaRender() : vistaAsistente()
+  if (foco === 'buscar' && $('#buscar')) { $('#buscar').focus(); $('#buscar').setSelectionRange(cursor, cursor) }
+  if (estado.pestana === 'asistente') window.scrollTo(0, document.body.scrollHeight)
+}
+const pintar = () => {
+  const app = $('#app')
+  if (estado.emparejado === null) return (app.innerHTML = '<p class="vacio">Conectando con Clipmill…</p>')
+  if (!estado.emparejado)
+    return (app.innerHTML = `<div class="emparejar"><div class="marca" style="justify-content:center"><span>Clip<b>mill</b></span></div>
+      <p>Para usar el estudio desde acá, abrí <b>Remoto</b> en Clipmill (en la PC) y escaneá el QR, o escribí el código:</p>
+      <input id="codigo" inputmode="numeric" maxlength="6" placeholder="000000" /><button class="primario" id="emparejar" style="width:100%">Emparejar</button></div>`)
+  const pestanas = [['cola', 'Cola'], ['render', 'Renderizar'], ['asistente', 'Asistente']]
+  app.innerHTML = `<header><div class="marca"><span>Clip<b>mill</b></span><span style="font-weight:500;color:var(--tenue);font-size:13px">remoto</span><small>${esc(estado.nombre)}</small></div>
+    <nav>${pestanas.map(([k, t]) => `<button class="${estado.pestana === k ? 'on' : ''}" data-pestana="${k}">${t}</button>`).join('')}</nav></header><main></main>`
+  pintarMain()
+}
+
+// ───── Eventos ─────
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('button, summary')
+  if (!b) return
+  const d = b.dataset
+  try {
+    if (b.tagName === 'SUMMARY') {
+      const c = b.parentElement.dataset.canal
+      setTimeout(() => (b.parentElement.open ? estado.abiertos.add(c) : estado.abiertos.delete(c)), 0)
+      return
+    }
+    if (b.id === 'emparejar') return emparejar($('#codigo').value)
+    if (d.pestana) {
+      estado.pestana = d.pestana
+      pintar()
+      if (d.pestana === 'render' && !estado.comps) estado.comps = await api('composiciones').catch((er) => (avisar(er.message), []))
+      if (d.pestana === 'cola') leerCola()
+      return pintarMain()
+    }
+    if (d.mover) await api('mover', { id: +d.id, a: d.mover })
+    if (d.cancelar) await api('cancelar', { id: +d.cancelar })
+    if (d.reintentar) (await api('reintentar', { id: +d.reintentar }), avisar('Vuelve a la cola.'))
+    if (d.render) {
+      const t = await api('render', { id: d.render })
+      avisar(`En la cola (#${t.id}): ${d.render}`)
+    }
+    if (d.ver) {
+      const m = document.createElement('div')
+      m.className = 'modal'
+      m.innerHTML = `<video src="/api/video?id=${+d.ver}" controls autoplay playsinline></video><button>Cerrar</button>`
+      m.querySelector('button').onclick = () => m.remove()
+      return document.body.append(m)
+    }
+    if (b.id === 'enviar') {
+      const t = $('#texto').value.trim()
+      if (t) preguntar(t)
+      return
+    }
+    if (d.decidir != null && estado.pendiente) {
+      const ll = estado.pendiente.llamada
+      estado.pendiente = null
+      return preguntar('', { llamada: ll, confirmar: d.decidir === '1' })
+    }
+    leerCola()
+  } catch (er) { avisar(er.message) }
+})
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'buscar') { estado.buscar = e.target.value; pintarMain() }
+  if (e.target.id === 'codigo' && e.target.value.length === 6) emparejar(e.target.value)
+})
+
+// Arranque: si el QR trajo el código, se empareja solo.
+;(async () => {
+  const codigo = new URLSearchParams(location.hash.slice(1)).get('codigo')
+  try {
+    const yo = await api('yo')
+    estado.emparejado = true
+    estado.nombre = yo.nombre
+    history.replaceState(null, '', '/')
+  } catch { estado.emparejado = false }
+  pintar()
+  if (!estado.emparejado && codigo) emparejar(codigo)
+  if (estado.emparejado) leerCola()
+  setInterval(() => estado.emparejado && !document.hidden && estado.pestana === 'cola' && leerCola(), 2000)
+})()
+</script>
+</body>
+</html>

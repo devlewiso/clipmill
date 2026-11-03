@@ -1,0 +1,63 @@
+{
+  "name": "fotograma",
+  "version": "0.1.0",
+  "description": "Framework para hacer videos con React: núcleo, transiciones, efectos, estudio y renderer propios.",
+  "license": "MIT",
+  "author": "devlewiso",
+  "type": "module",
+  "bin": {
+    "fotograma": "./bin/fotograma.mjs"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./transiciones": "./src/transiciones/index.tsx",
+    "./fx": "./src/fx/index.tsx",
+    "./escena": "./src/escena/index.tsx",
+    "./formas": "./src/formas/index.tsx",
+    "./trazos": "./src/trazos.ts",
+    "./ruido": "./src/ruido.ts",
+    "./subtitulos": "./src/subtitulos.ts",
+    "./guion": "./src/guion/index.ts",
+    "./ritmo": "./src/ritmo.ts",
+    "./color": "./src/color.tsx",
+    "./render": "./cli/render.ts"
+  },
+  "files": [
+    "src",
+    "app",
+    "cli",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "ejemplo": "cd ejemplo && node ../bin/fotograma.mjs estudio"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "dependencies": {
+    "@types/qrcode": "^1.5.6",
+    "@vitejs/plugin-react": "^6.1.1",
+    "@xyflow/react": "^12.12.0",
+    "express": "^5.2.1",
+    "node-cron": "^4.6.0",
+    "puppeteer-core": "^24.43.1",
+    "qrcode": "^1.5.4",
+    "simplex-noise": "^4.0.3",
+    "tsx": "^4.23.15",
+    "vite": "^8.3.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.3",
+    "@types/node-cron": "^3.0.11",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}
