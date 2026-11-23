@@ -627,10 +627,7 @@ export const Composiciones = ({
                     <a href={'/__fotograma/api/archivo?ruta=' + encodeURIComponent(t.salida)} target="_blank" rel="noreferrer">
                       abrir
                     </a>{' '}
-                    · <span className="tenue">{t.salida.split('/').pop()}</span> ·{' '}
-                    <a href="#" onClick={(e) => (e.preventDefault(), localStorage.setItem('fotograma:pestana', 'videos'), location.reload())}>
-                      publicar
-                    </a>
+                    · <span className="tenue">{t.salida.split('/').pop()}</span>
                   </small>
                 )}
                 {(t.estado === 'error' || t.estado === 'cancelado') && (
@@ -679,6 +676,13 @@ export const Composiciones = ({
                 ))}
               </tbody>
             </table>
+            <h3>Seguridad</h3>
+            <ul className="tenue">
+              <li>El estudio solo acepta órdenes desde esta pestaña o desde la terminal: si otra página web intenta mandarle algo, se rechaza.</li>
+              <li>Esta versión no trae flujos ni nodos que ejecuten comandos: lo que agregue tu IA es código que podés leer.</li>
+              <li>No abras el estudio a la red ni ejecutes proyectos de desconocidos sin leerlos.</li>
+              <li>Todo el detalle está en <code>docs/seguridad.md</code>.</li>
+            </ul>
           </div>
         </div>
       )}

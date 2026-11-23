@@ -1,74 +1,52 @@
-# Clipmill
+# Clipmill · framework de video para IAs
 
-**La fábrica de videos con IA en piloto automático:** de una idea a un video publicado en YouTube y TikTok,
-con un lienzo de flujos donde ves lo que genera cada paso.
+**Un framework para hacer videos con React, pensado para que una IA (Claude, Codex, Gemini…) cree los videos y le agregue funciones nuevas por vos.** Escribís (o tu IA escribe) composiciones en código, las ves en el estudio y las renderizás a MP4.
 
-> Clipmill es el nombre comercial. El paquete, la CLI y las rutas internas siguen llamándose `fotograma`.
+> Clipmill es el nombre comercial. El paquete, la CLI y las rutas internas se llaman `fotograma`.
 
-Framework para hacer videos con React. Núcleo, renderer, estudio, transiciones y efectos propios
-(sin código bajo la "Remotion License"; ver [src/terceros/LICENCIAS.md](src/terceros/LICENCIAS.md)).
+Núcleo, renderer, estudio, transiciones y efectos propios (sin código bajo la «Remotion License»; ver [src/terceros/LICENCIAS.md](src/terceros/LICENCIAS.md)). Licencia MIT.
 
 ```bash
-npx fotograma estudio                       # previsualizar y renderizar en el navegador (puerto 3060)
+npx fotograma estudio                       # ver y renderizar en el navegador (http://127.0.0.1:3060)
 npx fotograma render Efectos out/fx.mp4     # renderizar (h264 | vp9 | prores | gif)
 npx fotograma imagen Portada out/p.png      # un frame como PNG
+npx fotograma revisar Efectos               # antes de renderizar: archivos que faltan, errores, huecos sin audio
 npx fotograma lista                         # composiciones del proyecto
 npx fotograma ritmo musica.mp3              # beats, compases y acentos → musica.ritmo.json
 ```
 
-## Estudio
+## Qué trae (y qué no)
 
-`npx fotograma estudio` abre **http://127.0.0.1:3060**. Pestañas:
+| Trae | No trae (a propósito) |
+|---|---|
+| El framework (`fotograma`, transiciones, fx, formas, trazos, ruido, subtítulos, color, ritmo, guiones) | Flujos de automatización, nodos de comandos o código, webhooks |
+| El estudio: composiciones, línea de tiempo, props, cola de render y retake, recursos | Publicar en redes, control remoto desde el teléfono, asistente con IA integrado |
+| La CLI y el renderer (Chrome headless + ffmpeg) | Limpieza de tomas a cámara y reencuadre |
+| **Un** proyecto de ejemplo y las skills de motion graphics para tu IA | |
 
-- **Composiciones**: el lateral tiene dos grupos con bloques plegables (se recuerda cuáles abriste):
-  **Canales** (un bloque por canal, definidos por vos
-  con tus guiones arriba en «✎ Mis videos» y debajo las carpetas por día) y **Ejemplos** (✨ Demos, 🎞️ Edits, 🔤 Título).
-  La regla de qué va a cada canal está en [`app/estudio/canales.ts`](app/estudio/canales.ts) (una línea por canal).
-  Visor con zoom, tablero de transparencia, pantalla completa, velocidad, bucle, rango de entrada/salida (I/O),
-  línea de tiempo con una pista por `Secuencia`, `Audio` y `Video`, props como formulario o JSON, y render.
-  Los renders van a la **[cola](docs/cola-y-retake.md)** (de a uno, reordenable, sobrevive a reinicios) y con un
-  rango marcado se puede hacer **Retake**: rehacer solo ese tramo y pegarlo sobre el video ya renderizado.
-- **✂ Limpiar**: [editar una toma a cámara por su texto](docs/limpiar.md). Clipmill propone qué cortar (muletillas,
-  tomas repetidas, arranques en falso) y lo editás como texto: seleccionar y borrar, devolver, mover frases
-  (Ctrl+X / Ctrl+V), deshacer (Ctrl+Z), con vista previa de cómo queda. Genera el clip para Tutorial Viral o la toma
-  limpia para el Noticiero, con [ruido de fondo](docs/ruido.md) suave / normal / fuerte (RNNoise) y «🎧 Comparar». Ahí mismo, **📐 [Reencuadrar](docs/reencuadrar.md)**: pasa un video a 9:16 / 4:5 / 1:1 / 16:9
-  siguiendo la cara (detección local, como «auto reframe» de CapCut).
-- **Flujos**: automatización tipo n8n dentro de Clipmill (no hace falta n8n). Editor de nodos con triggers
-  (manual, cron, webhook en `/webhook/<ruta>`), HTTP, Código (compatible con `$json`, `$('Nodo')`, `$input`), IF, Loop,
-  Unir, tablas de datos, LLM (Ollama/OpenAI con esquema JSON, reintentos y modelo de respaldo), Kie, ElevenLabs,
-  YouTube, TikTok, Telegram y los nodos de Clipmill: **Crear guion → Voz del guion → Render**.
-  Ejecución en vivo, datos de entrada/salida de cada nodo, historial, credenciales (`~/.config/fotograma/`),
-  plantillas ("Diálogo con personajes", "Flujo en blanco"; agregá las tuyas en `cli/flujos/plantillas.ts`) e **importación de workflows de n8n**.
-  Los flujos se guardan en `flujos/`, las tablas en `datos/tablas/` y lo generado en `.fotograma/`.
-- **Videos**: lo renderizado y la biblioteca, para publicar en YouTube / TikTok.
-- **Recursos**: archivos de `public/` (arrastrar para subir, clic para copiar la ruta). En un audio, **🥁 Ritmo**
-  detecta beats y compases para [cortar al ritmo](docs/ritmo.md).
-- **Personajes**: fichas de personajes (`public/personajes/<id>/personaje.json`).
+Lo que «no trae» existe en la versión privada de NeuralCodeLab. Acá quedó fuera para que el framework sea simple y **seguro de instalar**: ver [docs/seguridad.md](docs/seguridad.md).
 
-En la cabecera:
+## Usarlo con tu IA
 
-- **📱 Remoto**: [usar Clipmill desde el teléfono](docs/remoto.md) en la misma red (emparejar con QR): cola,
-  encolar renders, ver los videos terminados y el asistente. No publica ni ejecuta flujos.
-- **✦ Asistente**: [chat con herramientas](docs/asistente.md) que edita guiones, clips y flujos, genera recursos y
-  maneja la cola («encolá los 3 idiomas», «hacé retake de 10 a 14 s»). Usa **Claude Code** (`claude -p`) por defecto.
+1. Abrí la carpeta del proyecto con tu IA (Claude Code, Codex, Cursor…).
+2. Pedile el video: «hacé una intro de 8 s con mi logo y una transición de iris», «un reel vertical con estos 5 datos».
+3. La IA escribe la composición en `ejemplo/src/composiciones.tsx` (o un archivo nuevo), la mirás en el estudio y la renderiza con `npx fotograma revisar` + `render`.
+4. ¿Falta algo? Pedile que lo agregue al framework: un efecto, una transición o un tipo de gráfico. Todo es código TypeScript/React legible y con nombres en español.
 
-Atajos: espacio, ←/→ (Shift = 1 s), Home/End, I/O, X, L, M, F, ?.
+Las skills de `skills/` (motion-cine, motion-fx-core y los estilos de Saul Bass, Kyle Cooper, Patrick Clair…) le enseñan a tu IA recetas de motion graphics.
 
 ### Guías
 
 | Guía | Qué explica |
 |---|---|
-| [docs/cola-y-retake.md](docs/cola-y-retake.md) | Cola de trabajos persistente, reordenar/cancelar/reintentar, Retake de un tramo, API |
-| [docs/limpiar.md](docs/limpiar.md) | Pestaña Limpiar: detector (`limpiar.py`), edición por texto (cortar, mover, deshacer) y clip limpio |
-| [docs/reencuadrar.md](docs/reencuadrar.md) | Reencuadrar a otro formato siguiendo la cara (YuNet local), CLI y cómo mueve la «cámara» |
-| [docs/bajar-musica.md](docs/bajar-musica.md) | Ducking: la música baja sola bajo la voz (`bajarCon` / `grupo` en `<Audio>` y `<Video>`) |
-| [docs/velocidad.md](docs/velocidad.md) | Velocidad por clip, cámara lenta suave (minterpolate) y congelar cuadro |
-| [docs/color.md](docs/color.md) | Looks de color por clip (`fotograma/color`) y LUTs `.cube` en las tomas de cámara |
-| [docs/linea-de-tiempo.md](docs/linea-de-tiempo.md) | Línea de tiempo editable de los videos de guion: clips, frases, textos y stickers |
-| [docs/ruido.md](docs/ruido.md) | Quitar el ruido de fondo de la voz (RNNoise): niveles, Comparar en Limpiar, `limpiarRuido` |
-| [docs/ritmo.md](docs/ritmo.md) | Ritmo: detectar beats/compases y `fotograma/ritmo` para cortar y animar al golpe |
-| [docs/remoto.md](docs/remoto.md) | Remoto: emparejar el teléfono, seguridad, API del puerto 3061 |
-| [docs/asistente.md](docs/asistente.md) | Asistente: proveedores (Claude Code / Ollama), herramientas, confirmaciones |
+| [docs/seguridad.md](docs/seguridad.md) | Cómo está protegido el estudio y qué cuidar |
+| [docs/cola-y-retake.md](docs/cola-y-retake.md) | Cola de render persistente, reordenar, cancelar, reintentar y Retake de un tramo |
+| [docs/estandar-video.md](docs/estandar-video.md) | Estándar para que cada pieza de una escena sea ajustable desde JSON y el inspector |
+| [docs/bajar-musica.md](docs/bajar-musica.md) | Ducking: la música baja sola bajo la voz (`bajarCon` / `grupo`) |
+| [docs/velocidad.md](docs/velocidad.md) | Velocidad por clip, cámara lenta suave y congelar cuadro |
+| [docs/color.md](docs/color.md) | Looks de color por clip (`fotograma/color`) y LUTs `.cube` |
+| [docs/linea-de-tiempo.md](docs/linea-de-tiempo.md) | Línea de tiempo editable de los videos de guion |
+| [docs/ritmo.md](docs/ritmo.md) | Detectar beats y cortar o animar al golpe de la música |
 
 ## Proyecto
 
@@ -122,34 +100,15 @@ export default [
    voz donde se pidió con `bajarCon`, ver [docs/bajar-musica.md](docs/bajar-musica.md)).
 
 Requisitos: Node 20+, Chrome/Chromium (`FOTOGRAMA_CHROME` para otra ruta) y ffmpeg (`FOTOGRAMA_FFMPEG`).
-Opcionales: Python con faster-whisper para Limpiar (`FOTOGRAMA_PY`), Claude Code (`claude`) u Ollama para el asistente.
 
 ### Variables de entorno
 
 | Variable | Para qué | Por defecto |
 |---|---|---|
-| `FOTOGRAMA_HOST` | Dónde escucha el estudio. `0.0.0.0` lo abre a la red **sin contraseña**: para el teléfono usá Remoto | `127.0.0.1` |
-| `FOTOGRAMA_REMOTO_PUERTO` | Puerto de Remoto | `3061` |
-| `FOTOGRAMA_AGENTE_PROVEEDOR` | Modelo del asistente: `claude` (Claude Code) u `ollama` | `claude` |
-| `FOTOGRAMA_AGENTE_MODELO` | Modelo (`sonnet`, `opus`, `haiku` con Claude; p. ej. `deepseek-v4.1-flash:cloud` con Ollama) | `sonnet` |
-| `FOTOGRAMA_RNNOISE` | Modelo RNNoise para quitar ruido de la voz | `~/.cache/clipmill/rnnoise-sh.rnnn` |
-| `FOTOGRAMA_YUNET` | Modelo de caras para Reencuadrar | `~/.cache/clipmill/face_detection_yunet_2023mar.onnx` |
-| `FOTOGRAMA_PY` | Python con faster-whisper y onnxruntime (Limpiar, Reencuadrar) | `python3` |
+| `FOTOGRAMA_HOST` | Dónde escucha el estudio. **No lo abras a la red** (`0.0.0.0`): no tiene contraseña | `127.0.0.1` |
 | `FOTOGRAMA_CHROME`, `FOTOGRAMA_FFMPEG` | Rutas de Chrome y ffmpeg | autodetectadas |
-
-### Configuración opcional (`~/.config/fotograma/config.json`)
-
-```json
-{
-  "biblioteca": "/ruta/a/tus/videos",
-  "canales": { "mi-canal": { "cuenta": "YouTube - Mi canal", "categoria": "22" } }
-}
-```
-
-- `biblioteca`: carpeta donde se archivan los videos terminados (también `FOTOGRAMA_BIBLIOTECA`).
-- `canales`: cuenta de YouTube (nombre de la credencial) y categoría para publicar desde la biblioteca.
-- Otras variables: `FOTOGRAMA_HERRAMIENTAS` (scripts/tokens de TikTok y Telegram), `FOTOGRAMA_PROTEGIDOS`
-  (rutas extra que los flujos nunca tocan, separadas por `:`), `FOTOGRAMA_VIDEOS_DATOS` (carpetas de JSON de videos editables).
+| `FOTOGRAMA_VIDEOS_DATOS` | Carpetas de JSON de videos que el inspector puede editar | `reels,videos` |
+| `CLIPMILL_SIN_CHEQUEO_ORIGEN` | Apaga el chequeo de origen (solo para depurar) | apagado |
 
 ## Empezar
 
@@ -159,5 +118,7 @@ cd ejemplo && npm install
 npx fotograma estudio        # http://127.0.0.1:3060
 ```
 
-El [`ejemplo/`](ejemplo/) trae demos neutras (título en 3 formatos, transiciones, efectos y formas).
-Las skills de motion graphics por estilo (`skills/estilo-*`, motor en `skills/motion-fx-core`) generan clips con Python + ffmpeg/Blender.
+El [`ejemplo/`](ejemplo/) es un solo proyecto con un título en 3 formatos y demos de transiciones, efectos y formas: es la referencia para tu IA.
+
+## Seguridad
+Revisado con un ejercicio Red, Blue y Purple Team el 23 de noviembre de 2026. Detalle, resultados y cómo reportar un problema en [docs/seguridad.md](docs/seguridad.md).

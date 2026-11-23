@@ -1,6 +1,6 @@
 // Recursos del proyecto (carpeta public/): ver, subir arrastrando y copiar la ruta.
 // Galería agrupada por carpeta: imágenes y video en tarjetas, audio en filas con su reproductor.
-// Abajo, lo que generaron los flujos (Cloudflare, Kie, voces) por ejecución. Doble clic abre el visor.
+// Doble clic abre el visor. (La versión pública no trae flujos: la sección de «generados» queda vacía.)
 import { useEffect, useRef, useState } from 'react'
 import { api } from './api'
 import { pulso, ultimoGolpe, type Ritmo } from '../../src/ritmo'
@@ -211,10 +211,7 @@ export const Recursos = ({ recursos, recargar }: { recursos: Recurso[]; recargar
   const [visor, setVisor] = useState<{ lista: Item[]; i: number } | null>(null)
 
   useEffect(() => {
-    fetch('/__fotograma/flujos/generados')
-      .then((r) => r.json())
-      .then((g) => setGenerados(Array.isArray(g) ? g : []))
-      .catch(() => {})
+    setGenerados([]) // la versión pública no trae flujos
   }, [recursos])
 
   // El aviso de "ruta copiada" se va solo.

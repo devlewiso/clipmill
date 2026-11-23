@@ -44,7 +44,7 @@ export const Avisos = () => {
     const leer = async () => {
       const [ts, es] = await Promise.all([
         fetch('/__fotograma/api/trabajos').then((r) => r.json()).catch(() => null) as Promise<Trabajo[] | null>,
-        fetch('/__fotograma/flujos/ejecuciones').then((r) => r.json()).catch(() => null) as Promise<Ejecucion[] | null>,
+        Promise.resolve(null) as Promise<Ejecucion[] | null>, // la versión pública no trae flujos
       ])
       if (!vivo || !Array.isArray(ts) || !Array.isArray(es)) return
       const ahora = new Map<string, string>()

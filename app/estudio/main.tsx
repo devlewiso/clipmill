@@ -7,13 +7,6 @@ import type { Composicion } from '../../src/nucleo/contexto'
 import { api } from './api'
 import { Composiciones } from './Composiciones'
 import { Recursos } from './Recursos'
-import { Personajes } from './Personajes'
-import { Flujos } from './Flujos'
-import { Videos } from './Videos'
-import { VistasPrevias } from './VistasPrevias'
-import { Asistente } from './Asistente'
-import { Remoto } from './Remoto'
-import { Limpiar } from './Limpiar'
 import { Avisos, useActividad } from './Avisos'
 import { Icono } from './iconos'
 import { activarTicGlobal, alCambiarSilencio, setSilenciado, silenciado, sonar } from './sonidos'
@@ -21,18 +14,17 @@ import { alCambiarDatos, contextoAgente } from './contextoAgente'
 import './estilos.css'
 
 // Los guiones se editan dentro de Composiciones (botón «Editar guion»); ya no tienen pestaña propia.
-type Pestana = 'composiciones' | 'limpiar' | 'flujos' | 'videos' | 'recursos' | 'personajes'
+type Pestana = 'composiciones' | 'recursos'
 
 const App = () => {
   const [pestana, setPestana] = useState<Pestana>(() => {
     const p = localStorage.getItem('fotograma:pestana')
-    return p === 'guiones' || !p ? 'composiciones' : (p as Pestana)
+    return p === 'recursos' ? 'recursos' : 'composiciones'
   })
   const [id, setId] = useState(() => decodeURIComponent(location.hash.slice(1))) // vacío = el video más reciente
   const [guiones, setGuiones] = useState<Composicion[]>([])
   const [recursos, setRecursos] = useState<{ ruta: string; bytes: number }[]>([])
-  const [remoto, setRemoto] = useState(false)
-  const [asistente, setAsistente] = useState(() => localStorage.getItem('fotograma:asistente-abierto') === '1')
+  const asistente = false
   const [modo, setModo] = useState<'clasico' | 'dinamico'>(() => (localStorage.getItem('fotograma:modo') === 'clasico' ? 'clasico' : 'dinamico'))
   document.documentElement.dataset.modo = modo
   useEffect(() => localStorage.setItem('fotograma:modo', modo), [modo])
@@ -63,12 +55,11 @@ const App = () => {
     })
     return () => (window.removeEventListener('hashchange', alCambiar), quitar())
   }, [])
-  useEffect(() => localStorage.setItem('fotograma:asistente-abierto', asistente ? '1' : '0'), [asistente])
   useEffect(() => {
     localStorage.setItem('fotograma:pestana', pestana)
     sonar('pestana')
     if (pestana === 'composiciones') cargarGuiones()
-    if (pestana === 'recursos' || pestana === 'personajes') cargarRecursos()
+    if (pestana === 'recursos') cargarRecursos()
   }, [pestana])
 
   const lista = [...(composiciones as Composicion[]), ...guiones]
@@ -93,11 +84,7 @@ const App = () => {
           {(
             [
               ['composiciones', 'Composiciones'],
-              ['limpiar', 'Limpiar'],
-              ['flujos', 'Flujos'],
-              ['videos', 'Videos'],
               ['recursos', 'Recursos'],
-              ['personajes', 'Personajes'],
             ] as [Pestana, string][]
           ).map(([k, t]) => (
             <button key={k} className={pestana === k ? 'on' : ''} onClick={() => setPestana(k)}>
@@ -132,12 +119,6 @@ const App = () => {
         >
           <Icono n={mudo ? 'silencio' : 'sonido'} t={16} />
         </button>}
-        <button className="boton-remoto" onClick={() => setRemoto(true)} title="Usar Clipmill desde el teléfono">
-          📱 Remoto
-        </button>
-        <button className={'boton-asistente' + (asistente ? ' on' : '')} onClick={() => (!asistente && sonar('abrir'), setAsistente(!asistente))} title="Asistente IA">
-          {modo === 'dinamico' ? <Icono n="asistente" t={15} /> : '✦'} Asistente
-        </button>
       </header>
       <div className="cuerpo" key={pestana}>
         {pestana === 'composiciones' && (
@@ -159,16 +140,9 @@ const App = () => {
             }}
           />
         )}
-        {pestana === 'limpiar' && <Limpiar />}
-        {pestana === 'flujos' && <Flujos />}
-        {pestana === 'videos' && <Videos />}
         {pestana === 'recursos' && <Recursos recursos={recursos} recargar={cargarRecursos} />}
-        {pestana === 'personajes' && <Personajes recursos={recursos} />}
       </div>
-      <VistasPrevias />
       <Avisos />
-      <Asistente abierto={asistente} cerrar={() => setAsistente(false)} />
-      {remoto && <Remoto cerrar={() => setRemoto(false)} />}
     </div>
   )
 }
