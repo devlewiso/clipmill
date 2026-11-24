@@ -21,7 +21,7 @@ npx fotograma ritmo musica.mp3              # beats, compases y acentos → musi
 |---|---|
 | El framework (`fotograma`, transiciones, fx, formas, trazos, ruido, subtítulos, color, ritmo, guiones) | Flujos de automatización, nodos de comandos o código, webhooks |
 | El estudio: composiciones, línea de tiempo, props, cola de render y retake, recursos | Publicar en redes, control remoto desde el teléfono, asistente con IA integrado |
-| La CLI y el renderer (Chrome headless + ffmpeg) | Limpieza de tomas a cámara y reencuadre |
+| La CLI, el renderer (Chrome headless + ffmpeg) y **voz en off local** (Kokoro) | Limpieza de tomas a cámara y reencuadre |
 | **Un** proyecto de ejemplo y las skills de motion graphics para tu IA | |
 
 Lo que «no trae» existe en la versión privada de NeuralCodeLab. Acá quedó fuera para que el framework sea simple y **seguro de instalar**: ver [docs/seguridad.md](docs/seguridad.md).
@@ -42,6 +42,7 @@ Las skills de `skills/` (motion-cine, motion-fx-core y los estilos de Saul Bass,
 | [docs/seguridad.md](docs/seguridad.md) | Cómo está protegido el estudio y qué cuidar |
 | [docs/cola-y-retake.md](docs/cola-y-retake.md) | Cola de render persistente, reordenar, cancelar, reintentar y Retake de un tramo |
 | [docs/estandar-video.md](docs/estandar-video.md) | Estándar para que cada pieza de una escena sea ajustable desde JSON y el inspector |
+| [docs/voz-local.md](docs/voz-local.md) | Voz en off local y gratis con Kokoro (GPU o CPU), lista para usar en videos comerciales |
 | [docs/bajar-musica.md](docs/bajar-musica.md) | Ducking: la música baja sola bajo la voz (`bajarCon` / `grupo`) |
 | [docs/velocidad.md](docs/velocidad.md) | Velocidad por clip, cámara lenta suave y congelar cuadro |
 | [docs/color.md](docs/color.md) | Looks de color por clip (`fotograma/color`) y LUTs `.cube` |
